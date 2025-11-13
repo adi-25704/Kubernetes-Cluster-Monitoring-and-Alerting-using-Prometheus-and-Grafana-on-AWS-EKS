@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: my-web-app
+  labels:
+    app: my-web-app
+spec:
+  replicas: 2 # Run 2 instances
+  selector:
+    matchLabels:
+      app: my-web-app
+  template:
+    metadata:
+      labels:
+        app: my-web-app
+      annotations:
+        # These annotations are KEY for Prometheus
+        prometheus.io/scrape: 'true'
+        prometheus.io/port: '5000' # The port our app exposes metrics on
+        prometheus.io/path: '/metrics'
+    spec:
+      containers:
+      - name: my-web-app
+        # IMPORTANT: This is a placeholder!
+        # The CI/CD pipeline will replace this automatically.
+        # For manual deployment, we will edit this.
+        image: <YOUR_ECR_REPOSITORY_URI_GOES_HERE>
+        ports:
+        - containerPort: 5000
+        resources:
+          requests: 
+            cpu: "100m"
+            memory: "128Mi"
+          limits: 
+            cpu: "250m"
+            memory: "256Mi"
