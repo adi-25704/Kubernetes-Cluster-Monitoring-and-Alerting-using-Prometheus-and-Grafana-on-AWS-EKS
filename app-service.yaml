@@ -4,18 +4,14 @@ metadata:
   name: my-web-app-service
   labels:
     app: my-web-app
-  # --- ADD THIS ANNOTATIONS BLOCK ---
-  # This tells Prometheus to find this Service
-  # and scrape the pods behind it.
-  annotations:
-    prometheus.io/scrape: 'true'
-    prometheus.io/port: '5000' # Scrape the pod's port (5000), not the service's port (80)
-    prometheus.io/path: '/metrics'
+  # --- ANNOTATIONS REMOVED ---
+  # We will use a ServiceMonitor instead
 spec:
   type: LoadBalancer
   ports:
   - port: 80
     targetPort: 5000
     protocol: TCP
+    name: http-metrics  # <-- THIS NAME IS IMPORTANT
   selector:
     app: my-web-app

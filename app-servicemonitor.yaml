@@ -1,0 +1,23 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: my-web-app-monitor
+  # The ServiceMonitor MUST be in the same namespace as Prometheus
+  namespace: monitoring
+  labels:
+    # This label tells the Prometheus Operator to pay attention to this object
+    release: my-monitoring-stack
+spec:
+  # This section tells the monitor WHICH service(s) to find
+  selector:
+    matchLabels:
+      app: my-web-app # <-- This matches the label on your app-service.yaml
+  # This tells the monitor WHICH namespace to look in
+  namespaceSelector:
+    matchNames:
+    - default # <-- This is the namespace your app is in
+  # This tells the monitor WHICH port on that service to scrape
+  endpoints:
+  - port: http-metrics # <-- This matches the port name from app-service.yaml
+    path: /metrics     # <-- This is your app's metrics path
+    interval: 15s      # Scrape every 15 seconds
