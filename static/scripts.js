@@ -8,12 +8,12 @@ async function loadTasks() {
         const li = document.createElement("li");
         li.textContent = task.title + (task.completed ? " ✔" : "");
 
-        // Create a delete button/icon
+        // Trash icon for deletion
         const delBtn = document.createElement("span");
-        delBtn.textContent = "🗑️"; // Trash icon
+        delBtn.textContent = "🗑️"; // Unicode trash icon
         delBtn.className = "delete-btn";
         delBtn.onclick = (e) => {
-            e.stopPropagation(); // prevent triggering li onclick
+            e.stopPropagation(); // prevent triggering li click if added later
             deleteTask(task.id);
         };
 
@@ -24,8 +24,7 @@ async function loadTasks() {
 
 async function addTask() {
     const title = document.getElementById("taskInput").value;
-
-    if(title.trim() === "") return; // prevent empty task
+    if(title.trim() === "") return;
 
     await fetch('/tasks', {
         method: 'POST',
