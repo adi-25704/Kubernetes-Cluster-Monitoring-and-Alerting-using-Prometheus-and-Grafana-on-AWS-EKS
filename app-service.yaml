@@ -4,11 +4,18 @@ metadata:
   name: my-web-app-service
   labels:
     app: my-web-app
+  # --- ADD THIS ANNOTATIONS BLOCK ---
+  # This tells Prometheus to find this Service
+  # and scrape the pods behind it.
+  annotations:
+    prometheus.io/scrape: 'true'
+    prometheus.io/port: '5000' # Scrape the pod's port (5000), not the service's port (80)
+    prometheus.io/path: '/metrics'
 spec:
-  type: LoadBalancer # This tells AWS to create an Elastic Load Balancer
+  type: LoadBalancer
   ports:
-  - port: 80       # External port
-    targetPort: 5000 # Internal port (matching our app)
+  - port: 80
+    targetPort: 5000
     protocol: TCP
   selector:
-    app: my-web-app # Selects the pods from our deployment
+    app: my-web-app
