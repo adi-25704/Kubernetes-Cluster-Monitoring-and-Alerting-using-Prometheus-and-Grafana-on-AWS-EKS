@@ -8,7 +8,7 @@ metadata:
 
 managedNodeGroups:
   - name: general-workloads-dev
-    instanceType: t3.micro
+    instanceType: t3.medium
     desiredCapacity: 2
     minSize: 1
     maxSize: 3

@@ -5,7 +5,7 @@ metadata:
   labels:
     app: my-web-app
 spec:
-  replicas: 1 # Run 2 instances
+  replicas: 2 # Run 2 instances
   selector:
     matchLabels:
       app: my-web-app
