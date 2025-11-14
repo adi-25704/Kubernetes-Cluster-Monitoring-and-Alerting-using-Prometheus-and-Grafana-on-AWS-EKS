@@ -8,7 +8,7 @@ metrics = PrometheusMetrics(app)
 @app.route('/')
 def hello():
     """Serves a simple hello world page."""
-    return "Hello! Your EKS application is running."
+    return "Hello Aditya, Nandini, Shreya! Your EKS application is running."
 
 @app.route('/health')
 def health_check():
