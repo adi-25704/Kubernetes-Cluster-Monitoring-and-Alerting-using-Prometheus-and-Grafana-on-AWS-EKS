@@ -18,10 +18,7 @@ jobs:
   build-and-push:
     name: Build and Push to ECR
     runs-on: ubuntu-latest
-    
-    # This defines the "output" variable that the next job will use
-    outputs:
-      image: ${{ steps.build-image.outputs.image }}
+    # --- NO "OUTPUTS" SECTION NEEDED ANYMORE ---
 
     steps:
     - name: Checkout code
@@ -32,7 +29,7 @@ jobs:
       with:
         aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        aws-region: ${{ secrets.AWS_REGION }}
+        aws-region: ${{ env.AWS_REGION }}
 
     - name: Login to Amazon ECR
       id: login-ecr
@@ -41,21 +38,18 @@ jobs:
     - name: Build, tag, and push image to Amazon ECR
       id: build-image
       run: |
-        # Build the docker image
+        # Build and tag the docker image
         docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
         
         # Push the image to ECR
         docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
         
-        # --- THIS IS THE UPDATED LINE ---
-        # This command saves the full image name as an output for the next job
-        echo "image=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG" >> $GITHUB_OUTPUT
-        # --------------------------------
+        # --- NO "ECHO" COMMAND NEEDED ANYMORE ---
 
   deploy-to-eks:
     name: Deploy to EKS
     runs-on: ubuntu-latest
-    needs: build-and-push # This job waits for the 'build-and-push' job to finish
+    needs: build-and-push # This job still waits for the 'build-and-push' job
 
     steps:
     - name: Checkout code
@@ -66,7 +60,7 @@ jobs:
       with:
         aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        aws-region: ${{ secrets.AWS_REGION }}
+        aws-region: ${{ env.AWS_REGION }}
 
     - name: Update kubeconfig for EKS
       run: aws eks update-kubeconfig --name $EKS_CLUSTER_NAME --region $AWS_REGION
@@ -76,12 +70,16 @@ jobs:
 
     - name: Deploy application deployment
       run: |
-        # 1. Replace the placeholder 'image:' line in the deployment file with the new image.
-        # This "sed" command finds the line starting with "image:" and replaces everything after it.
-        sed -i.bak "s|image: .*|image: ${{ needs.build-and-push.outputs.image }}|g" app-deployment.yaml
+        # --- THIS IS THE NEW, IMPROVED COMMAND ---
+        # 1. Re-build the full image name from the same environment variables
+        #    that the build job used.
+        echo "--- Deploying image: $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG ---"
         
-        # 2. Apply the updated deployment file
+        # 2. Run the 'sed' command using these variables.
+        sed -i.bak "s|image: .*|image: $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG|g" app-deployment.yaml
+        
+        # 3. Apply the updated deployment file
         kubectl apply -f app-deployment.yaml
         
-        # 3. Force the deployment to restart and pull the new image
+        # 4. Force the deployment to restart and pull the new image
         kubectl rollout restart deployment/my-web-app
