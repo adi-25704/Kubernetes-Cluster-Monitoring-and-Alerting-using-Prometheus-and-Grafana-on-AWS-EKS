@@ -1,0 +1,16 @@
+apiVersion: eksctl.io/v1alpha5
+kind: ClusterConfig
+
+metadata:
+  name: obs-platform-dev
+  region: ap-southeast-1
+  version: "1.28"
+
+managedNodeGroups:
+  - name: general-workloads-dev
+    instanceType: t3.micro
+    desiredCapacity: 2
+    minSize: 1
+    maxSize: 3
+    ssh:
+      allow: false # Disallow SSH access for better security

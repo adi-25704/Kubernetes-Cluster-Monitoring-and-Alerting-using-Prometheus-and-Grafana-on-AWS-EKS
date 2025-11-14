@@ -5,7 +5,7 @@ metadata:
   labels:
     app: my-web-app
 spec:
-  replicas: 2 # Run 2 instances
+  replicas: 1 # Run 2 instances
   selector:
     matchLabels:
       app: my-web-app
@@ -24,7 +24,7 @@ spec:
         # IMPORTANT: This is a placeholder!
         # The CI/CD pipeline will replace this automatically.
         # For manual deployment, we will edit this.
-        image: <YOUR_ECR_REPOSITORY_URI_GOES_HERE>
+        image: 398456183297.dkr.ecr.ap-southeast-1.amazonaws.com/kubernetes-cluster-monitoring-and-alerting-using-prometheus-and-grafana-on-aws-eks
         ports:
         - containerPort: 5000
         resources:
