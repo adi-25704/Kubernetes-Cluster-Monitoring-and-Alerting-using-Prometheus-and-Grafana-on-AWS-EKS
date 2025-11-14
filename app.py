@@ -4,6 +4,10 @@ import time
 
 app = Flask(__name__)
 
+@app.route("/")
+def index():
+    return render_template("index.html")
+
 # In-memory task list
 tasks = []
 task_id_counter = 1
