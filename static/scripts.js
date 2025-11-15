@@ -56,8 +56,26 @@ document.addEventListener("DOMContentLoaded", () => {
 
             if (!response.ok) throw new Error("Could not add task");
 
+            // --- THIS IS THE FIX ---
+
+            // 1. Get the new task object back from the API response
+            const newTask = await response.json(); 
+
             taskInput.value = ""; // Clear input
-            await loadTasks(); // Re-fetch and render all tasks
+            
+            // 2. Instead of re-fetching all tasks, just render the new one.
+            //    This is *much* faster.
+            renderTask(newTask);
+            
+            // 3. Re-apply the filter in case we're on "Completed"
+            //    (This will correctly hide the new, active task)
+            applyFilter();
+            
+            // OLD, SLOW WAY (REMOVED):
+            // await loadTasks(); 
+
+            // --- END OF FIX ---
+
         } catch (error) {
             console.error("Error adding task:", error);
         }
@@ -65,6 +83,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     /**
      * Toggles the 'completed' status of a task.
+     * (This still uses the re-fetch method, which is fine for updates)
      */
     const toggleTaskComplete = async (id, completed) => {
         try {
@@ -81,6 +100,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     /**
      * Deletes a task by its ID.
+     * (This still uses the re-fetch method, which is fine for updates)
      */
     const deleteTask = async (id) => {
         if (!confirm("Are you sure you want to delete this task?")) {
@@ -99,6 +119,7 @@ document.addEventListener("DOMContentLoaded", () => {
     
     /**
      * Updates a task's title.
+     * (This still uses the re-fetch method, which is fine for updates)
      */
     const updateTaskTitle = async (id, newTitle) => {
         if (newTitle.trim() === "") {
@@ -164,7 +185,7 @@ document.addEventListener("DOMContentLoaded", () => {
         li.appendChild(checkbox);
         li.appendChild(span);
         li.appendChild(actions);
-        taskList.appendChild(li);
+        taskList.appendChild(li); // Adds the new item to the list
     };
 
     /**
