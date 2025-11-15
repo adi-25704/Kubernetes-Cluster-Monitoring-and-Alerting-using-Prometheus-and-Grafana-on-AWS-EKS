@@ -4,43 +4,41 @@ import time
 
 app = Flask(__name__)
 
-@app.route("/")
-def index():
-    return render_template("index.html")
-
-# In-memory task list
+# --- In-memory "database" ---
 tasks = []
 task_id_counter = 1
 
-# Prometheus Metrics
+# --- Prometheus Metrics ---
 REQUEST_COUNTER = Counter(
     "todo_http_requests_total", 
     "Total HTTP requests", 
     ["method", "endpoint"]
 )
-
 TASK_CREATION_TIME = Histogram(
     "todo_task_creation_seconds",
     "Time spent creating task"
 )
-
 TASK_DELETION_TIME = Histogram(
     "todo_task_deletion_seconds",
     "Time spent deleting task"
 )
-
 TASKS_CREATED = Counter(
     "todo_tasks_created_total",
     "Total number of tasks created"
 )
-
 TASKS_DELETED = Counter(
     "todo_tasks_deleted_total",
     "Total number of tasks deleted"
 )
 
+# --- Frontend Route ---
+@app.route("/")
+def index():
+    """Serves the main HTML page."""
+    # This looks for 'index.html' in a folder named 'templates'
+    return render_template("index.html")
 
-# Routes
+# --- API Routes ---
 @app.route("/tasks", methods=['GET'])
 def get_tasks():
     REQUEST_COUNTER.labels(method="GET", endpoint="/tasks").inc()
@@ -54,9 +52,16 @@ def create_task():
     REQUEST_COUNTER.labels(method="POST", endpoint="/tasks").inc()
 
     data = request.json
+    
+    # --- IMPROVEMENT ---
+    # Add validation to prevent empty tasks
+    if not data or not data.get("title") or data.get("title").strip() == "":
+        return jsonify({"error": "Title is required"}), 400
+    # -------------------
+
     task = {
         "id": task_id_counter,
-        "title": data.get("title"),
+        "title": data.get("title").strip(),
         "completed": False
     }
     tasks.append(task)
@@ -73,7 +78,9 @@ def update_task(task_id):
     data = request.json
     for task in tasks:
         if task["id"] == task_id:
+            # Update title if provided, else keep old title
             task["title"] = data.get("title", task["title"])
+            # Update completed status if provided, else keep old status
             task["completed"] = data.get("completed", task["completed"])
             return jsonify(task)
 
@@ -96,12 +103,13 @@ def delete_task(task_id):
     return jsonify({"error": "Task not found"}), 404
 
 
-# Prometheus metrics endpoint
+# --- Prometheus Metrics Endpoint ---
 @app.route("/metrics")
 def metrics():
+    """Serves Prometheus metrics."""
     return generate_latest(), 200, {"Content-Type": CONTENT_TYPE_LATEST}
 
 
-# Run
+# --- Run ---
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000)
