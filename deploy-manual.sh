@@ -46,7 +46,7 @@ kubectl apply -f app-service.yaml
 # replaces the placeholder URI with your real ECR URI,
 # and pipes the new, correct YAML directly into kubectl.
 echo "Updating deployment with image: ${ECR_URI}:latest"
-sed "s|398456183297.dkr.ecr.ap-southeast-1.amazonaws.com/kubernetes-cluster-monitoring-and-alerting-using-prometheus-and-grafana-on-aws-eks|${ECR_URI}:latest|g" app-deployment.yaml | kubectl apply -f -
+sed "s|398456183297.dkr.ecr.us-east-1.amazonaws.com/kubernetes-cluster-monitoring-and-alerting-using-prometheus-and-grafana-on-aws-eks|${ECR_URI}:latest|g" app-deployment.yaml | kubectl apply -f -
 
 echo "--- Deployment Complete! ---"
 echo "Waiting for pods to be ready..."

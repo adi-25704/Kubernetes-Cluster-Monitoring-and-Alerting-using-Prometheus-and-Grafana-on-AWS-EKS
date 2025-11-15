@@ -8,6 +8,13 @@ WORKDIR /app
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
+# --- THE FIX ---
+# Copy the new templates and static folders into the container
+# This will fix your "Internal Server Error"
+COPY templates /app/templates
+COPY static /app/static
+# ----------------
+
 # Copy the application code
 COPY app.py .
 
