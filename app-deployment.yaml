@@ -24,7 +24,7 @@ spec:
         # IMPORTANT: This is a placeholder!
         # The CI/CD pipeline will replace this automatically.
         # For manual deployment, we will edit this.
-        image: 398456183297.dkr.ecr.ap-southeast-1.amazonaws.com/kubernetes-cluster-monitoring-and-alerting-using-prometheus-and-grafana-on-aws-eks
+        image: 398456183297.dkr.ecr.us-east-1.amazonaws.com/kubernetes-cluster-monitoring-and-alerting-using-prometheus-and-grafana-on-aws-eks
         ports:
         - containerPort: 5000
         resources:

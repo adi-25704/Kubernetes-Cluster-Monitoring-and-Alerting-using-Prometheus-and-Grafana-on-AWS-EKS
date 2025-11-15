@@ -5,7 +5,7 @@
 AWS_ACCOUNT_ID="398456183297"
 
 # The region your EKS cluster is in (e.g., us-east-1)
-AWS_REGION="ap-southeast-1"
+AWS_REGION="us-east-1"
 
 # The name of your ECR repository
 REPO_NAME="kubernetes-cluster-monitoring-and-alerting-using-prometheus-and-grafana-on-aws-eks"
