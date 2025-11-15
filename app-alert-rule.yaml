@@ -1,0 +1,23 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: test-alert-rule
+  # Must be in the monitoring namespace
+  namespace: monitoring 
+  labels:
+    # This label tells the Prometheus Operator to find this rule
+    release: my-monitoring-stack
+spec:
+  groups:
+  - name: TestAlertGroup
+    rules:
+    - alert: EKSAutoHealerTest
+      # 'vector(1)' is an expression that is always true
+      expr: vector(1) 
+      # Wait 1 minute before firing, to make sure it's stable
+      for: 1m 
+      labels:
+        severity: critical
+      annotations:
+        summary: "This is a test alert to trigger the EKS auto-healer."
+        description: "If you see this, the alert pipeline is working."

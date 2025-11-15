@@ -1,0 +1,30 @@
+# This file configures Alertmanager to send alerts to AWS SNS
+
+alertmanager:
+  # This section creates the main Alertmanager configuration
+  config:
+    global:
+      # This is the API endpoint for SNS in your region.
+      # Make sure this matches your cluster's region (e.g., us-east-1).
+      sns_api_url: https://sns.us-east-1.amazonaws.com
+
+    # This is the "address book"
+    receivers:
+      - name: 'aws-sns' # A name for our new receiver
+        sns_configs:
+          - topic_arn: "arn:aws:sns:us-east-1:398456183297:eks-cluster-alerts"
+            region: "us-east-1" # Make sure this is your region
+            sigv4:
+              # This tells Alertmanager to use the IAM Role
+              # instead of secret keys.
+              role_arn: "eks.amazonaws.com/role-arn: arn:aws:iam::398456183297:role/eksctl-obs-platform-dev-addon-iamserviceaccou-Role1-JaBFK6EfF0Hb"
+
+    # This section tells Alertmanager what to do with alerts
+    route:
+      # This is the "default" receiver for all alerts
+      receiver: 'aws-sns'
+      # This groups alerts together
+      group_by: ['alertname', 'job']
+      group_wait: 30s
+      group_interval: 5m
+      repeat_interval: 1h
