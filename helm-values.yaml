@@ -1,0 +1,30 @@
+alertmanager:
+  enabled: true
+
+  alertmanagerSpec:
+    replicas: 1
+    serviceAccountName: my-monitoring-stack-alertmanager
+
+  serviceAccount:
+    create: true
+    name: my-monitoring-stack-alertmanager
+    annotations:
+      eks.amazonaws.com/role-arn: "arn:aws:iam::398456183297:role/eksctl-obs-platform-dev-addon-iamserviceaccou-Role1-5yrvNh3ODquX"
+
+  config:
+    global:
+      resolve_timeout: 5m
+
+    route:
+      receiver: aws-sns
+      group_by: ['alertname', 'job']
+      group_wait: 30s
+      group_interval: 5m
+      repeat_interval: 1h
+
+    receivers:
+      - name: aws-sns
+        sns_configs:
+          - topic_arn: "arn:aws:sns:us-east-1:398456183297:eks-cluster-alerts"
+            sigv4:
+              role_arn: "arn:aws:iam::398456183297:role/eksctl-obs-platform-dev-addon-iamserviceaccou-Role1-5yrvNh3ODquX"
