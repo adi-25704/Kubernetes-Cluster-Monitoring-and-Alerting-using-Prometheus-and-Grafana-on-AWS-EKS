@@ -1,0 +1,21 @@
+alertmanager:
+  config:
+    global:
+      resolve_timeout: 5m
+    route:
+      group_by: ['job']
+      group_wait: 30s
+      group_interval: 5m
+      repeat_interval: 12h
+      receiver: 'sns-forwarder' # Default receiver
+      routes:
+      - match:
+          alertname: Watchdog
+        receiver: 'null'
+    receivers:
+    - name: 'null'
+    - name: 'sns-forwarder'
+      webhook_configs:
+      # This URL points to the Service we created in Step 1
+      - url: 'http://prometheus-sns-forwarder.monitoring.svc:9087/alert'
+        send_resolved: true

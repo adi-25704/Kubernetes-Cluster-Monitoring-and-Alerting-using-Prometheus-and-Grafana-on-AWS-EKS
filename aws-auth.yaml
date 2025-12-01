@@ -1,0 +1,16 @@
+apiVersion: v1
+data:
+  mapRoles: |
+    - rolearn: arn:aws:iam::398456183297:role/eksctl-obs-platform-dev-nodegroup--NodeInstanceRole-Xx01vyX15ApW
+      username: system:node:{{EC2PrivateDNSName}}
+      groups:
+        - system:bootstrappers
+        - system:nodes
+    - rolearn: arn:aws:iam::398456183297:role/EKS-Auto-Healer-role-9veipskq
+      username: lambda-remediator
+      groups:
+        - system:masters
+kind: ConfigMap
+metadata:
+  name: aws-auth
+  namespace: kube-system

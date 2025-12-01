@@ -4,7 +4,7 @@
             {
                 "Effect": "Allow",
                 "Action": "sns:Publish",
-                "Resource": "rn:aws:sns:us-east-1:398456183297:eks-cluster-alerts"
+                "Resource": "arn:aws:sns:us-east-1:398456183297:eks-cluster-alerts"
             }
 ]
 }

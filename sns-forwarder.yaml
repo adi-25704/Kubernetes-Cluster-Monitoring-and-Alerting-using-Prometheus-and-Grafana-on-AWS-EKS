@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: prometheus-sns-forwarder
+  namespace: monitoring
+  labels:
+    app: prometheus-sns-forwarder
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: prometheus-sns-forwarder
+  template:
+    metadata:
+      labels:
+        app: prometheus-sns-forwarder
+    spec:
+      containers:
+      - name: prometheus-sns-forwarder
+        # REPLACE THIS with the output from the build script
+        image: 398456183297.dkr.ecr.us-east-1.amazonaws.com/my-sns-forwarder:latest
+        env:
+        - name: SNS_TOPIC_ARN
+          value: "arn:aws:sns:us-east-1:398456183297:eks-cluster-alerts" # Verify this ARN
+        ports:
+        - containerPort: 9087
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: prometheus-sns-forwarder
+  namespace: monitoring
+spec:
+  selector:
+    app: prometheus-sns-forwarder
+  ports:
+    - port: 9087
+      targetPort: 9087
