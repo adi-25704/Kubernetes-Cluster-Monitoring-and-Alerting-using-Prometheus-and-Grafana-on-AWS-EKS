@@ -3,36 +3,46 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EKS Chaos Store</title>
+    <title>Heavy Chaos Store</title>
     <style>
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #1e1e2e; color: #fff; text-align: center; padding: 20px; }
-        .container { max-width: 800px; margin: 0 auto; }
+        body { font-family: 'Segoe UI', sans-serif; background-color: #0f0f1a; color: #fff; text-align: center; padding: 20px; }
+        .container { max-width: 900px; margin: 0 auto; }
         .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-top: 30px; }
-        .card { background: #2b2b3b; padding: 20px; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.3); }
-        .price { color: #4cd137; font-size: 1.5em; font-weight: bold; }
-        .btn { padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; font-size: 1em; margin-top: 10px; transition: 0.2s; }
-        .btn-buy { background: #00a8ff; color: white; }
+        .card { background: #1f1f2e; padding: 20px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.5); }
+        .price { color: #4cd137; font-size: 1.8em; font-weight: bold; margin: 10px 0; }
+        .btn { padding: 12px 24px; border: none; border-radius: 6px; cursor: pointer; font-size: 1em; margin-top: 10px; font-weight: bold; }
+        .btn-buy { background: #00a8ff; color: white; width: 100%; }
         .btn-buy:hover { background: #0097e6; }
         
-        .chaos-panel { margin-top: 50px; padding: 20px; border: 2px solid #e84118; border-radius: 10px; background: #2f3640; }
-        .chaos-title { color: #e84118; text-transform: uppercase; letter-spacing: 2px; }
-        .btn-chaos { background: #353b48; color: #7f8fa6; width: 150px; }
-        .btn-chaos.active { background: #e84118; color: white; box-shadow: 0 0 10px #e84118; }
+        .chaos-panel { margin-top: 60px; padding: 30px; border: 2px solid #e84118; border-radius: 16px; background: #2f3640; }
+        .chaos-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; max-width: 600px; margin: 20px auto; }
+        .chaos-title { color: #e84118; text-transform: uppercase; letter-spacing: 3px; font-size: 1.5em; }
         
-        .status-badge { display: inline-block; padding: 5px 10px; border-radius: 15px; font-size: 0.8em; margin-bottom: 20px; }
-        .status-ok { background: #44bd32; }
-        .status-err { background: #c23616; }
+        .btn-chaos { background: #353b48; color: #dcdde1; padding: 15px; }
+        .btn-chaos:hover { background: #718093; }
+        
+        .btn-chaos.active { color: white; box-shadow: 0 0 15px currentColor; border: 2px solid white; }
+        .btn-latency.active { background: #fbc531; color: black; }
+        .btn-error.active { background: #c23616; }
+        .btn-cpu.active { background: #9c88ff; }
+        .btn-mem.active { background: #0097e6; }
+
+        .status-badge { display: inline-block; padding: 8px 16px; border-radius: 20px; font-size: 0.9em; margin-bottom: 20px; font-weight: bold; }
+        .status-ok { background: #44bd32; color: white; }
+        .status-err { background: #c23616; color: white; animation: pulse 1s infinite; }
+        
+        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>🛍️ EKS Chaos Store</h1>
-        <p>Observability Demo Playground</p>
+        <h1>🚀 Heavy Chaos Store</h1>
+        <p>Generating 1000+ Transactions per Minute</p>
 
         {% if error %}
-        <div class="status-badge status-err">⚠️ SYSTEM ERROR (500)</div>
+        <div class="status-badge status-err">⚠️ 500 INTERNAL SERVER ERROR</div>
         {% else %}
-        <div class="status-badge status-ok">● SYSTEM NORMAL</div>
+        <div class="status-badge status-ok">● SYSTEMS OPERATIONAL</div>
         {% endif %}
 
         <div class="grid">
@@ -40,23 +50,32 @@
             <div class="card">
                 <h3>{{ name|upper }}</h3>
                 <div class="price">${{ data.price }}</div>
-                <p>Stock: {{ data.stock }}</p>
-                <button class="btn btn-buy" onclick="buy('{{ name }}')">Buy Now</button>
+                <button class="btn btn-buy" onclick="buy('{{ name }}')">Buy Item</button>
             </div>
             {% endfor %}
         </div>
 
         <div class="chaos-panel">
-            <h3 class="chaos-title">🔥 Chaos Control Center</h3>
-            <p>Inject failures to test your Prometheus Alerts</p>
+            <h3 class="chaos-title">🔥 Chaos Injection</h3>
+            <p>Click to break things (Observe in Grafana)</p>
             
-            <button id="btn-latency" class="btn btn-chaos {% if chaos.latency %}active{% endif %}" onclick="toggleChaos('latency')">
-                🐢 High Latency
-            </button>
-            
-            <button id="btn-error" class="btn btn-chaos {% if chaos.error_rate %}active{% endif %}" onclick="toggleChaos('error')">
-                💣 50% Error Rate
-            </button>
+            <div class="chaos-grid">
+                <button id="btn-latency" class="btn btn-chaos btn-latency {% if chaos.latency %}active{% endif %}" onclick="toggleChaos('latency')">
+                    🐢 High Latency<br><small>(+2000ms)</small>
+                </button>
+                
+                <button id="btn-error" class="btn btn-chaos btn-error {% if chaos.error_rate %}active{% endif %}" onclick="toggleChaos('error')">
+                    💣 Error Rate<br><small>(50% Failures)</small>
+                </button>
+
+                <button id="btn-cpu" class="btn btn-chaos btn-cpu {% if chaos.cpu_stress %}active{% endif %}" onclick="toggleChaos('cpu_stress')">
+                    🔥 CPU Spike<br><small>(Factorials)</small>
+                </button>
+
+                <button id="btn-memory_leak" class="btn btn-chaos btn-mem {% if chaos.memory_leak %}active{% endif %}" onclick="toggleChaos('memory_leak')">
+                    💧 Memory Leak<br><small>(Append List)</small>
+                </button>
+            </div>
         </div>
     </div>
 
@@ -65,7 +84,7 @@
             fetch(`/buy/${item}`, {method: 'POST'})
                 .then(res => {
                     if(res.ok) location.reload();
-                    else alert("Transaction Failed! (Check Grafana)");
+                    else location.reload(); // Reload even on error to show status
                 })
                 .catch(err => alert("Network Error"));
         }
