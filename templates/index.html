@@ -21,6 +21,7 @@
         .btn-chaos { background: #353b48; color: #dcdde1; padding: 15px; }
         .btn-chaos:hover { background: #718093; }
         
+        /* Active States */
         .btn-chaos.active { color: white; box-shadow: 0 0 15px currentColor; border: 2px solid white; }
         .btn-latency.active { background: #fbc531; color: black; }
         .btn-error.active { background: #c23616; }
@@ -68,7 +69,8 @@
                     💣 Error Rate<br><small>(50% Failures)</small>
                 </button>
 
-                <button id="btn-cpu" class="btn btn-chaos btn-cpu {% if chaos.cpu_stress %}active{% endif %}" onclick="toggleChaos('cpu_stress')">
+                <!-- FIXED: Changed ID from btn-cpu to btn-cpu_stress -->
+                <button id="btn-cpu_stress" class="btn btn-chaos btn-cpu {% if chaos.cpu_stress %}active{% endif %}" onclick="toggleChaos('cpu_stress')">
                     🔥 CPU Spike<br><small>(Factorials)</small>
                 </button>
 
@@ -84,18 +86,27 @@
             fetch(`/buy/${item}`, {method: 'POST'})
                 .then(res => {
                     if(res.ok) location.reload();
-                    else location.reload(); // Reload even on error to show status
+                    else location.reload();
                 })
                 .catch(err => alert("Network Error"));
         }
 
         function toggleChaos(type) {
+            // The logic requires the ID to be `btn-${type}`
             const btn = document.getElementById(`btn-${type}`);
-            const action = btn.classList.contains('active') ? 'off' : 'on';
+            if (!btn) {
+                alert(`Error: Button ID btn-${type} not found!`);
+                return;
+            }
+            
+            // Toggle local visual state immediately for better feedback
+            const isActive = btn.classList.contains('active');
+            const action = isActive ? 'off' : 'on';
             
             fetch(`/api/chaos/${type}/${action}`, {method: 'POST'})
                 .then(res => res.json())
-                .then(data => location.reload());
+                .then(data => location.reload())
+                .catch(err => alert("Failed to toggle chaos"));
         }
     </script>
 </body>
