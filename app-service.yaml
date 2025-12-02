@@ -4,14 +4,12 @@ metadata:
   name: my-web-app-service
   labels:
     app: my-web-app
-  # --- ANNOTATIONS REMOVED ---
-  # We will use a ServiceMonitor instead
 spec:
   type: LoadBalancer
   ports:
   - port: 80
     targetPort: 5000
     protocol: TCP
-    name: http-metrics  # <-- THIS NAME IS IMPORTANT
+    name: http-metrics
   selector:
     app: my-web-app

@@ -4,17 +4,14 @@ import boto3
 import logging
 from flask import Flask, request, jsonify
 
-# Configure Logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger("sns-forwarder")
 
 app = Flask(__name__)
 
-# Configuration
 SNS_TOPIC_ARN = os.environ.get("SNS_TOPIC_ARN")
 REGION = os.environ.get("AWS_REGION", "us-east-1")
 
-# Initialize Boto3 SNS Client
 try:
     sns = boto3.client("sns", region_name=REGION)
 except Exception as e:
@@ -35,15 +32,11 @@ def receive_alert():
         return jsonify({"error": "Configuration error: SNS_TOPIC_ARN missing"}), 500
 
     try:
-        # 1. Parse the Alertmanager JSON
         payload = request.json
         logger.info(f"Received alert payload: {json.dumps(payload)}")
 
-        # 2. Extract meaningful message (Simplified)
-        # We send the raw JSON so Lambda can parse 'status' and 'alerts'
         message_body = json.dumps(payload)
 
-        # 3. Publish to SNS
         response = sns.publish(
             TopicArn=SNS_TOPIC_ARN,
             Message=message_body,

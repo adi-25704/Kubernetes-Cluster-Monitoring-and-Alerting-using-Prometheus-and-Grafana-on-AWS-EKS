@@ -13,4 +13,4 @@ managedNodeGroups:
     minSize: 1
     maxSize: 3
     ssh:
-      allow: false # Disallow SSH access for better security
+      allow: false

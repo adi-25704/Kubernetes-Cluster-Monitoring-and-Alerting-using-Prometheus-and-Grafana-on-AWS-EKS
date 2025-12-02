@@ -14,18 +14,15 @@ SALES_TOTAL = Counter("sales_dollars_total", "Total sales in dollars")
 INVENTORY = Gauge("inventory_items", "Current items in stock", ["product"])
 ACTIVE_USERS = Gauge("active_users", "Fake active users count")
 
-# --- CHAOS SETTINGS ---
 chaos_config = {
-    "latency": False,     # Sleep 2s
-    "error_rate": False,  # 50% 500 Errors
-    "cpu_stress": False,  # Calculate Factorials (Burns CPU)
-    "memory_leak": False  # Appends to a global list (Eats RAM)
+    "latency": False,     
+    "error_rate": False,  
+    "cpu_stress": False,  
+    "memory_leak": False  
 }
 
-# Fake Memory Leak Storage
 leak_storage = []
 
-# --- FAKE DATABASE ---
 products = {
     "laptop": {"price": 1200, "stock": 50},
     "phone": {"price": 800, "stock": 100},
@@ -35,57 +32,58 @@ products = {
 for p, data in products.items():
     INVENTORY.labels(product=p).set(data["stock"])
 
-# --- BACKGROUND TRAFFIC GENERATOR (TURBO MODE) ---
+
+def burn_cpu(duration=0.2):
+    """
+    Forces the CPU to spin for specific seconds.
+    This guarantees a visible spike in Prometheus.
+    """
+    end_time = time.time() + duration
+
+    while time.time() < end_time:
+        _ = 1000000 * 10000000 * math.sqrt(random.random())
+
 def traffic_simulator():
     """Generates heavy background traffic"""
     while True:
         try:
-            # Fluctuate users more aggressively
             ACTIVE_USERS.set(random.randint(200, 5000))
             
             if not chaos_config["error_rate"]:
                 p = random.choice(list(products.keys()))
                 SALES_TOTAL.inc(products[p]["price"])
-                
-                # Auto-restock to keep graph moving
                 products[p]["stock"] -= 1
                 if products[p]["stock"] < 10: products[p]["stock"] = 100 
                 INVENTORY.labels(product=p).set(products[p]["stock"])
 
-            # If Memory Leak is on, add 1MB string to memory every cycle
             if chaos_config["memory_leak"]:
                 leak_storage.append("A" * 1024 * 1024) 
 
         except Exception:
             pass
         
-        # Sleep ONLY 0.05s to create massive traffic (20 requests/sec)
-        time.sleep(0.05)
+        sleep_time = 0.05
+        if chaos_config["cpu_stress"]:
+
+            sleep_time = 0.1 
+
+        time.sleep(sleep_time)
 
 t = threading.Thread(target=traffic_simulator)
 t.daemon = True
 t.start()
-
-# --- CPU BURNER ---
-def burn_cpu():
-    """Forces CPU usage by doing useless math"""
-    # Calculate factorial of 5000 (Very heavy operation)
-    math.factorial(5000)
 
 @app.route("/")
 def index():
     start = time.time()
     status = 200
     
-    # 1. CPU Stress (Blocks the thread to spike CPU usage)
     if chaos_config["cpu_stress"]:
-        burn_cpu()
+        burn_cpu(0.3)
 
-    # 2. Latency (Sleeps)
     if chaos_config["latency"]:
         time.sleep(random.uniform(1.0, 2.0))
         
-    # 3. Error Rate
     if chaos_config["error_rate"] and random.random() < 0.5:
         status = 500
         HTTP_REQUESTS.labels(method="GET", endpoint="/", status=500).inc()
@@ -100,7 +98,7 @@ def buy(product):
     start = time.time()
     
     if chaos_config["cpu_stress"]:
-        burn_cpu()
+        burn_cpu(0.2)
 
     if chaos_config["error_rate"]:
         HTTP_REQUESTS.labels(method="POST", endpoint="/buy", status=500).inc()
@@ -119,7 +117,6 @@ def set_chaos(type, action):
     global leak_storage
     if type in chaos_config:
         chaos_config[type] = (action == "on")
-        # Clear memory if leak is turned off
         if type == "memory_leak" and action == "off":
             leak_storage = []
     return jsonify(chaos_config)

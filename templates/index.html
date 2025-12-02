@@ -69,7 +69,6 @@
                     💣 Error Rate<br><small>(50% Failures)</small>
                 </button>
 
-                <!-- FIXED: Changed ID from btn-cpu to btn-cpu_stress -->
                 <button id="btn-cpu_stress" class="btn btn-chaos btn-cpu {% if chaos.cpu_stress %}active{% endif %}" onclick="toggleChaos('cpu_stress')">
                     🔥 CPU Spike<br><small>(Factorials)</small>
                 </button>
@@ -92,14 +91,13 @@
         }
 
         function toggleChaos(type) {
-            // The logic requires the ID to be `btn-${type}`
+           
             const btn = document.getElementById(`btn-${type}`);
             if (!btn) {
                 alert(`Error: Button ID btn-${type} not found!`);
                 return;
             }
             
-            // Toggle local visual state immediately for better feedback
             const isActive = btn.classList.contains('active');
             const action = isActive ? 'off' : 'on';
             

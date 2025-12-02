@@ -17,11 +17,11 @@ spec:
     spec:
       containers:
       - name: prometheus-sns-forwarder
-        # REPLACE THIS with the output from the build script
+
         image: 398456183297.dkr.ecr.us-east-1.amazonaws.com/my-sns-forwarder:latest
         env:
         - name: SNS_TOPIC_ARN
-          value: "arn:aws:sns:us-east-1:398456183297:eks-cluster-alerts" # Verify this ARN
+          value: "arn:aws:sns:us-east-1:398456183297:eks-cluster-alerts"
         ports:
         - containerPort: 9087
 ---

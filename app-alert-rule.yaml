@@ -4,8 +4,6 @@ metadata:
   name: test-alert-rule
   namespace: monitoring
   labels:
-    # CRITICAL: This label MUST match your Helm release name
-    # If you installed with 'helm install prometheus ...', this is likely 'prometheus'
     release: prometheus 
     role: alert-rules
 spec:
