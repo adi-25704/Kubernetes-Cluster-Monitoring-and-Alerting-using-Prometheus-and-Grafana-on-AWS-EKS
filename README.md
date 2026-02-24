@@ -218,8 +218,8 @@ You can now go to Dashboards > Browse and explore pre-built dashboards like "Kub
 
 👥 Team Roles
 
-Member 1 (DevOps Lead): Cluster Setup & Deployment (EKS, Prometheus, Grafana).
+Shreya Patel: Infrastructure & CI/CD (EKS Architecture, Dockerization, GitHub Actions).
 
-Member 2 (CI/CD Engineer): Automation & Integration (GitHub Actions, ECR).
+Nandini Mandaviya: Observability (Prometheus Stack, PromQL, Grafana Dashboards).
 
-Member 3 (Monitoring Specialist): Observability & Reporting (Grafana Dashboards, Alerting).
+Aditya Desai: Remediation (SNS Middleware, Lambda Logic, Kubernetes RBAC).
