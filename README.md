@@ -6,11 +6,11 @@ This project demonstrates a complete, end-to-end DevOps pipeline to deploy, moni
 
 The project deploys a sample Python Flask application to a Kubernetes (EKS) cluster. The deployment is fully automated via GitHub Actions, which builds and pushes the application container to ECR. Finally, the cluster's health and application-specific metrics are monitored in real-time using Prometheus and visualized on a Grafana dashboard.
 
-🧭 Project Goal
+Project Goal
 
 To design, deploy, and monitor a cloud-native Kubernetes environment on AWS, demonstrating real-time observability through Prometheus and Grafana to provide insights into cluster performance, resource utilization, and application health.
 
-⚙️ System Architecture
+System Architecture
 
 The high-level architecture of the project is as follows:
 
@@ -36,7 +36,7 @@ User Push ─▶│   │  Actions)     │──▶│ Docker │   │
            └────────────────────────────────────┘
 
 
-✨ Key Features
+Key Features
 
 Automated CI/CD: On every git push to the main branch, GitHub Actions automatically builds the Docker image, pushes it to ECR, and deploys the new version to the EKS cluster.
 
@@ -48,7 +48,7 @@ Real-time Metrics: Prometheus automatically scrapes custom metrics from the appl
 
 Observability Dashboard: Grafana provides a rich, interactive dashboard to visualize all collected metrics, pre-configured with a Prometheus data source.
 
-🛠️ Tech Stack
+Tech Stack
 
 Cloud Provider: AWS (Amazon Web Services)
 
@@ -68,7 +68,7 @@ Deployment Tools: kubectl, helm
 
 Infrastructure CLI: aws-cli, eksctl
 
-🏁 Getting Started
+Getting Started
 
 Follow these steps to deploy the entire project from scratch.
 
@@ -203,7 +203,7 @@ Password: (The password from step 1).
 
 You can now go to Dashboards > Browse and explore pre-built dashboards like "Kubernetes / Compute Resources / Cluster" to see your cluster's health.
 
-📂 File Structure
+File Structure
 
 .
 ├── .github/workflows/
